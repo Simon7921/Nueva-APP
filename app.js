@@ -144,7 +144,30 @@
     $("dot").textContent = n || "";
     renderNext();
   }
-  $("meals").addEventListener("click", function (e) { var b = e.target.closest("[data-m]"); if (!b) return; plate.meal = b.dataset.m; savePlate(); renderInicio(); show("alimentos"); });
+  $("meals").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-m]"); if (!b) return;
+    var target = b.dataset.m;
+    function startMeal() { plate.meal = target; savePlate(); renderInicio(); show("alimentos"); }
+    if (target === plate.meal || !plate.items.length) { startMeal(); return; }
+    confirmModal({
+      title: "¿Empezar " + meal(target).name.toLowerCase() + "?",
+      text: "Tu plato actual de " + meal(plate.meal).name.toLowerCase() + " tiene " + plate.items.length + " alimento(s). Para no mezclar comidas, al cambiar se vaciará. Puedes cancelar y guardar el plato primero.",
+      ok: "Cambiar y vaciar", danger: true,
+      onOk: function () { plate.items = []; startMeal(); }
+    });
+  });
+  // Acciones fotográficas visibles desde Inicio. El HTML de prueba nunca simula análisis IA.
+  document.querySelectorAll("[data-photo-jump]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      show("alimentos");
+      var target = b.dataset.photoJump === "label" ? $("labelPhotoPanel") : $("platePhotoPanel");
+      if (target) {
+        $("labelPhotoPanel").open = target === $("labelPhotoPanel");
+        $("platePhotoPanel").open = target === $("platePhotoPanel");
+        setTimeout(function () { target.scrollIntoView({behavior:"smooth",block:"start"}); }, 90);
+      }
+    });
+  });
   $("plate").addEventListener("click", function (e) {
     var ed = e.target.closest("[data-edit]"); if (!ed) return;
     var k = +ed.dataset.edit, x = plate.items[k]; var f = findFood(x.fid) || { id: x.fid, name: x.name, hc100: x.hc100, unit: x.unit, kind: "plate" }; qtySheet(f, k);
@@ -241,16 +264,16 @@
     var rmBtn = editing ? '<button class="btn btn-danger" id="qRm" style="margin-top:10px">' + ico("trash", "s") + "Quitar del plato</button>" : "";
     var extra = rmBtn + (food.kind === "custom" ? '<div class="grid2" style="margin-top:10px"><button class="btn btn-secondary" id="qEd">' + ico("pencil", "s") + 'Editar</button><button class="btn btn-danger" id="qDel">' + ico("trash", "s") + "Eliminar</button></div>" : "");
     openSheet('<h3 id="shT">' + esc(food.name) + stateBadge(food) + '</h3><p class="t2 small" style="margin:0 0 14px">' + metaTxt(food) + "<br>Fuente: " + esc(srcTxt(food)) + "</p>" + unitSeg +
-      '<label class="f" for="qQ" id="qL"></label><div class="inp"><input id="qQ" inputmode="decimal" autocomplete="off" value="' + (editing ? dec(it.qty) : "") + '"><span id="qU"></span></div><div class="quick" id="qk"></div>' +
+      '<label class="f" for="qQ" id="qL"></label><div class="inp"><input id="qQ" inputmode="decimal" autocomplete="off" value="' + (editing ? dec(it.qty) : (mode === "u" ? "1" : "")) + '"><span id="qU"></span></div><div class="quick" id="qk"></div>' +
       '<p class="t2 small" style="margin:8px 0 0;text-align:center">' + (editing ? "¿Un poquito más o menos? Ajusta y listo." : "") + '</p><div class="calc"><b id="qR">0</b>g HC</div><div class="row"><button class="ibtn' + (fav ? " on" : "") + '" id="qFav" aria-pressed="' + fav + '" aria-label="Marcar como favorito" style="border:1px solid var(--border2)">' + ico("star") + '</button><button class="btn btn-primary sp" id="qOk">' + (editing ? "Guardar cambios" : "Agregar al plato") + "</button></div>" + extra, function (b) {
       var inp = b.querySelector("#qQ");
       function lab() {
-        b.querySelector("#qL").textContent = mode === "u" ? "¿Cuántas unidades?" : "¿Cuánto vas a comer? (g o ml)"; b.querySelector("#qU").textContent = mode === "u" ? "u" : "g"; inp.placeholder = mode === "u" ? "1" : "Ej. 120";
+        b.querySelector("#qL").textContent = mode === "u" ? "¿Cuántas unidades?" : "¿Cuánto vas a comer? (g o ml)"; b.querySelector("#qU").textContent = mode === "u" ? "u" : "g/ml"; inp.placeholder = mode === "u" ? "1" : "Ej. 120";
         b.querySelector("#qk").innerHTML = (mode === "u" ? [1, 2, 3] : [50, 100, 150, 200]).map(function (v) { return '<button data-v="' + v + '">' + v + (mode === "u" ? "" : " g") + "</button>"; }).join("");
       }
       function upd() { var q = C.num(inp.value); b.querySelector("#qR").textContent = fmt(q > 0 ? C.hcFor(food, q, mode) : 0); }
       lab(); upd(); inp.addEventListener("input", upd);
-      var ms = b.querySelector("#qMode"); if (ms) ms.addEventListener("click", function (e) { var x = e.target.closest("[data-v]"); if (!x) return; mode = x.dataset.v; ms.querySelectorAll("button").forEach(function (y) { y.setAttribute("aria-pressed", String(y === x)); }); inp.value = ""; lab(); upd(); inp.focus(); });
+      var ms = b.querySelector("#qMode"); if (ms) ms.addEventListener("click", function (e) { var x = e.target.closest("[data-v]"); if (!x) return; mode = x.dataset.v; ms.querySelectorAll("button").forEach(function (y) { y.setAttribute("aria-pressed", String(y === x)); }); inp.value = mode === "u" ? "1" : ""; lab(); upd(); inp.focus(); });
       b.querySelector("#qk").addEventListener("click", function (e) { var x = e.target.closest("[data-v]"); if (x) { inp.value = x.dataset.v; upd(); } });
       b.querySelector("#qFav").onclick = function () { var i = favFoods.indexOf(food.id); if (i >= 0) favFoods.splice(i, 1); else favFoods.push(food.id); S.saveList("favFoods", favFoods); var on = i < 0; this.classList.toggle("on", on); this.setAttribute("aria-pressed", on); toast(on ? "Guardado en tus favoritos ★" : "Quitado de tus favoritos", "star"); if (ui.screen === "alimentos") renderFoods(); };
       b.querySelector("#qOk").onclick = function () {

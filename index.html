@@ -614,7 +614,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 @media(max-width:360px){#s-inicio .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 </style>
-<link rel="stylesheet" href="sage-dashboard.css?v=14">
+<link rel="stylesheet" href="sage-dashboard.css?v=16">
 <style>
 /* Navegación y flujo de alimentos - versión V6 */
 .food-walkthrough{border:1px solid #D7E3D3;border-radius:22px;padding:16px;background:linear-gradient(120deg,#E5F2E6,#FFF9EC);box-shadow:0 8px 20px #8A9C8A18;margin:12px 0 16px;color:#42675B}
@@ -687,6 +687,10 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
     <div class="nextbar-shell schedule-control"><button class="nextbar" id="nextPill" aria-label="Ver y editar horarios"></button><button type="button" class="schedule-edit" id="editSchedule" aria-label="Editar los horarios de comidas y recordatorios">✎ <span>Editar horarios</span></button></div>
     <div class="section-intro"><div class="dashboard-section-heading"><div><span class="soft-kicker">ARMA TU PLATO</span><h2>¿Qué comida vamos a preparar?</h2><p class="meal-helper">Toca una opción para buscar y agregar alimentos a tu plato.</p></div></div></div>
     <div class="mgrid" id="meals" role="group" aria-label="Selecciona la comida que quieres preparar"></div><div class="meal-selection-status" id="mealSelectionStatus" aria-live="polite"></div>
+    <div class="diego-home-actions" aria-label="Accesos a fotografía nutricional">
+      <button class="diego-home-action" type="button" data-photo-jump="label"><span class="diego-action-emoji" aria-hidden="true">📦</span><span><b>Escanear etiqueta</b><small>Leer producto con IA si está conectada</small></span><span aria-hidden="true">›</span></button>
+      <button class="diego-home-action" type="button" data-photo-jump="plate"><span class="diego-action-emoji" aria-hidden="true">📷</span><span><b>Foto del plato</b><small>Estimación que debes revisar</small></span><span aria-hidden="true">›</span></button>
+    </div>
     <div class="dashboard-stats" aria-label="Resumen de tu plato">
       <div class="stat3d mint" role="status"><span class="stat-emoji">🥗</span><span class="stat-label">Carbohidratos del plato</span><strong id="dashHC">—</strong><small>g HC calculados</small></div>
       <div class="stat3d peach" role="status"><span class="stat-emoji">🍎</span><span class="stat-label">Alimentos elegidos</span><strong id="dashFoods">0</strong><small>En la comida actual</small></div>
@@ -746,6 +750,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
       <div class="food-steps"><span><b>1</b> Busca un alimento</span><span><b>2</b> Toca + y pon la cantidad</span><span><b>3</b> Presiona “Agregar al plato”</span></div>
       <p>Después puedes agregar otro alimento o volver a ver tu plato.</p>
     </div>
+    <div class="diego-search-tip" role="note">✓ Elige alimentos y confirma su cantidad. Los HC de una foto de plato son solo aproximados.</div>
     <div class="search"><div class="inp"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Busca lo que vas a comer" autocomplete="off" aria-label="Buscar alimento"></div></div>
     <div class="chips" id="cats" role="group" aria-label="Filtros"></div>
     <div class="food-list-head"><strong>Busca y agrega</strong><span>Porciones ajustables</span></div>
@@ -754,12 +759,13 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
     <div class="photo-entry card" style="margin-top:14px;padding:16px">
       <strong style="display:block;margin-bottom:6px">📷 Agregar con una foto</strong>
       <p class="muted small" style="margin:0 0 12px">Elige una imagen desde tu teléfono. La cámara y el selector funcionan mejor abriendo esta aplicación desde GitHub Pages en Safari o Chrome.</p>
+      <details id="aiConfigPanel" style="border:1px solid var(--border2);border-radius:16px;padding:12px;margin-bottom:10px"><summary style="font-weight:800;cursor:pointer">⚙️ Configurar IA (primera vez)</summary><div id="aiConnectionSettings" style="padding-top:12px"></div></details>
       <details class="photo-panel" id="labelPhotoPanel" style="border:1px solid var(--border2);border-radius:16px;padding:12px;margin-bottom:10px">
         <summary style="font-weight:800;cursor:pointer;min-height:38px;display:list-item">📦 Foto de etiqueta nutricional</summary>
         <label class="f" for="labelPhotoInput" style="margin-top:14px">Abrir cámara o elegir fotografía</label>
         <input class="in s" id="labelPhotoInput" type="file" accept="image/*" aria-label="Elegir foto de etiqueta" style="display:block;width:100%">
         <img id="labelPhotoPreview" hidden alt="Vista previa de la etiqueta" style="max-width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin:10px auto">
-        <p class="t2 small">Transcribe los datos de la etiqueta. Esta versión no lee automáticamente el texto de la foto.</p>
+        <p class="t2 small">Puedes usar IA para completar los datos. Comprueba los valores antes de guardar.</p>
         <label class="f" for="labelFoodName">Nombre del producto</label><input class="in s" id="labelFoodName" placeholder="Ej. Néctar de piña">
         <label class="f" for="labelHC" style="margin-top:10px">Carbohidratos declarados (g)</label><input class="in s" id="labelHC" inputmode="decimal" placeholder="Ej. 6,4">
         <label class="f" for="labelBasis" style="margin-top:10px">Valor de referencia</label>
@@ -773,7 +779,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
         <label class="f" for="platePhotoInput" style="margin-top:14px">Abrir cámara o elegir fotografía</label>
         <input class="in s" id="platePhotoInput" type="file" accept="image/*" aria-label="Elegir foto del plato" style="display:block;width:100%">
         <img id="platePhotoPreview" hidden alt="Vista previa del plato" style="max-width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin:10px auto">
-        <p class="t2 small">La fotografía es solo una referencia visual. No es posible calcular con precisión los HC sin conocer ingredientes y cantidades.</p>
+        <p class="t2 small">La IA sugiere ingredientes y HC estimados. Verifica cantidades antes de incorporar la comida a tu plato.</p>
         <button type="button" class="btn btn-primary" id="plateChooseFoods" style="margin-top:10px;width:100%">Buscar ingredientes del plato</button>
       </details>
     </div>
@@ -797,6 +803,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 
   <!-- 5. MI PAUTA -->
   <section class="screen" id="s-pauta" hidden>
+    <div class="diego-medical-notice" role="note"><strong>Importante para Diego</strong><span>Esta pauta es personal. Confirma con el equipo tratante los cambios de dosis, el manejo de insulina activa y las situaciones de ejercicio, hipoglucemia o enfermedad. Nunca calcules una dosis usando solo los HC estimados de una fotografía.</span></div>
     <header class="top pastel-pagehead"><div><div class="eyebrow">TU INFORMACIÓN, BIEN CLARA</div><h1 class="h1">Mi pauta <span aria-hidden="true">📋</span></h1><div class="hello" id="pMeal"></div></div><button class="avatar" data-go="perfil" aria-label="Perfil y configuración">D</button></header>
     <div class="pauta-intro"><span class="pauta-intro-icon" aria-hidden="true">🛡️</span><div><strong>Revisemos tu pauta</strong><small>Con calma, claridad y las indicaciones de tu equipo médico.</small></div></div>
     <div class="pauta-privacy">🔒 <span>Tu información y tus valores están aquí para consultar; confirma siempre las decisiones de insulina con tu pauta clínica vigente.</span></div><div class="cols"><div>
@@ -931,6 +938,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 <script src="calc.js"></script>
 <script src="store.js"></script>
 <script src="app.js"></script>
-<script src="sage-dashboard.js?v=14"></script>
+<script src="sage-dashboard.js?v=16"></script>
+<script src="ai-photos.js?v=16"></script>
 </body>
 </html>

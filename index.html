@@ -599,8 +599,22 @@ html[data-mode] .pastel-shortcut:nth-child(3) .sc-symbol{background:#E4E6FA;colo
 html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 @media(max-width:360px){html[data-mode] #s-inicio .mast2 .mast-player{height:218px!important;right:-30px!important}html[data-mode] #s-inicio .mast2{min-height:219px}html[data-mode] #s-inicio .mast2 .hi{font-size:27px!important}}
 
+
+/* UX V7: horarios editables y selección de comida accionable */
+.schedule-control{display:flex!important;align-items:center;gap:10px;flex-wrap:wrap}
+.schedule-control .nextbar{flex:1 1 235px;min-width:0;margin:0}
+.schedule-edit{flex:0 0 auto;min-height:46px;padding:0 17px;border:1px solid #9FC9B3;border-radius:15px;background:#F8FFFA;color:#2E654E;font-weight:800;display:inline-flex;align-items:center;gap:6px;box-shadow:0 5px 14px #4B80631A}
+.schedule-edit:focus-visible,.mgrid .chip:focus-visible{outline:3px solid #407F68;outline-offset:2px}
+.meal-helper{font-size:14px;color:#657A6C;line-height:1.4;margin:6px 0 0;max-width:480px;font-weight:500}
+#s-inicio .mgrid .chip{position:relative;min-height:78px;padding:9px 3px 19px;white-space:normal;gap:5px;box-shadow:0 5px 13px #597F6320}
+#s-inicio .mgrid .chip:after{content:"Armar →";display:block;position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:10.5px;line-height:1.2;font-weight:800;opacity:.8}
+#s-inicio .mgrid .chip[aria-pressed=true]:after{content:"Elegir +"}
+.meal-selection-status{font-size:13px;color:#526B5A;font-weight:700;padding:1px 3px 10px}
+@media(max-width:580px){.schedule-control{gap:7px}.schedule-control .nextbar{flex-basis:100%}.schedule-edit{margin-left:auto;min-height:42px}.meal-helper{font-size:13px}#s-inicio .mgrid{grid-template-columns:repeat(3,minmax(0,1fr))}#s-inicio .mgrid .chip{min-height:76px}}
+@media(max-width:360px){#s-inicio .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
-<link rel="stylesheet" href="sage-dashboard.css?v=6">
+<link rel="stylesheet" href="sage-dashboard.css?v=8">
 <style>
 /* Navegación y flujo de alimentos - versión V6 */
 .food-walkthrough{border:1px solid #D7E3D3;border-radius:22px;padding:16px;background:linear-gradient(120deg,#E5F2E6,#FFF9EC);box-shadow:0 8px 20px #8A9C8A18;margin:12px 0 16px;color:#42675B}
@@ -619,6 +633,20 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
   .food-finish{position:sticky;bottom:calc(82px + env(safe-area-inset-bottom));z-index:15;box-shadow:0 8px 25px #56827322}
 }
 @media(max-width:380px){.food-finish{flex-direction:column;align-items:stretch}.food-finish .btn{width:100%}}
+
+/* UX V7: horarios editables y selección de comida accionable */
+.schedule-control{display:flex!important;align-items:center;gap:10px;flex-wrap:wrap}
+.schedule-control .nextbar{flex:1 1 235px;min-width:0;margin:0}
+.schedule-edit{flex:0 0 auto;min-height:46px;padding:0 17px;border:1px solid #9FC9B3;border-radius:15px;background:#F8FFFA;color:#2E654E;font-weight:800;display:inline-flex;align-items:center;gap:6px;box-shadow:0 5px 14px #4B80631A}
+.schedule-edit:focus-visible,.mgrid .chip:focus-visible{outline:3px solid #407F68;outline-offset:2px}
+.meal-helper{font-size:14px;color:#657A6C;line-height:1.4;margin:6px 0 0;max-width:480px;font-weight:500}
+#s-inicio .mgrid .chip{position:relative;min-height:78px;padding:9px 3px 19px;white-space:normal;gap:5px;box-shadow:0 5px 13px #597F6320}
+#s-inicio .mgrid .chip:after{content:"Armar →";display:block;position:absolute;bottom:5px;left:0;right:0;text-align:center;font-size:10.5px;line-height:1.2;font-weight:800;opacity:.8}
+#s-inicio .mgrid .chip[aria-pressed=true]:after{content:"Elegir +"}
+.meal-selection-status{font-size:13px;color:#526B5A;font-weight:700;padding:1px 3px 10px}
+@media(max-width:580px){.schedule-control{gap:7px}.schedule-control .nextbar{flex-basis:100%}.schedule-edit{margin-left:auto;min-height:42px}.meal-helper{font-size:13px}#s-inicio .mgrid{grid-template-columns:repeat(3,minmax(0,1fr))}#s-inicio .mgrid .chip{min-height:76px}}
+@media(max-width:360px){#s-inicio .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style></head>
 <body>
 <button type="button" id="mobileMenuButton" class="mobile-menu-button" aria-label="Abrir menú con todas las secciones" aria-controls="mainSidebar" aria-expanded="false"><span aria-hidden="true">☰</span><span>Menú</span></button>
@@ -647,17 +675,18 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
   <section class="screen pastel-home" id="s-inicio" hidden aria-labelledby="hiT">
 <header class="sage-hero" aria-labelledby="hiT">
       <div class="hero-copy">
-        <span class="hero-eyebrow">TU ESPACIO · DIEGO · UX V6</span>
+        <span class="hero-eyebrow">TU ESPACIO · DIEGO · V8</span>
         <h1 class="hi" id="hiT">¡Hola, Diego!</h1>
         <div class="hi2" id="hello">¡Vamos, Diego! ⚽</div>
         <p>¿Qué comeremos hoy? Armemos algo rico.</p>
         <button class="hero-cta" data-go="alimentos"><svg class="ico s"><use href="#i-plus"/></svg> Armar mi plato</button>
       </div>
       <img class="sage-player" src="player-soft-pastel.webp" alt="Ilustración 3D de futbolista juvenil con pelota" />
+      <div class="sage-bike-figure" role="img" aria-label="Ciclista deportivo">🚴‍♂️</div>
       </header>
-    <div class="nextbar-shell"><button class="nextbar" id="nextPill" aria-label="Ver horarios"></button></div>
-    <div class="section-intro"><div class="dashboard-section-heading"><div><span class="soft-kicker">ORGANIZA TU DÍA</span><h2>Elige tu comida</h2></div><span class="heading-hint">Un paso a la vez ✨</span></div><span class="intro-spark" aria-hidden="true">✦</span></div>
-    <div class="mgrid" id="meals" role="group" aria-label="Comida"></div>
+    <div class="nextbar-shell schedule-control"><button class="nextbar" id="nextPill" aria-label="Ver y editar horarios"></button><button type="button" class="schedule-edit" id="editSchedule" aria-label="Editar los horarios de comidas y recordatorios">✎ <span>Editar horarios</span></button></div>
+    <div class="section-intro"><div class="dashboard-section-heading"><div><span class="soft-kicker">ARMA TU PLATO</span><h2>¿Qué comida vamos a preparar?</h2><p class="meal-helper">Toca una opción para buscar y agregar alimentos a tu plato.</p></div></div></div>
+    <div class="mgrid" id="meals" role="group" aria-label="Selecciona la comida que quieres preparar"></div><div class="meal-selection-status" id="mealSelectionStatus" aria-live="polite"></div>
     <div class="dashboard-stats" aria-label="Resumen de tu plato">
       <div class="stat3d mint" role="status"><span class="stat-emoji">🥗</span><span class="stat-label">Carbohidratos del plato</span><strong id="dashHC">—</strong><small>g HC calculados</small></div>
       <div class="stat3d peach" role="status"><span class="stat-emoji">🍎</span><span class="stat-label">Alimentos elegidos</span><strong id="dashFoods">0</strong><small>En la comida actual</small></div>
@@ -790,7 +819,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
       <button class="set" id="schedB"><span class="ic"><svg class="ico s"><use href="#i-clock"/></svg></span><span class="tx"><b>Horarios y alarmas</b><span id="schedTxt">Comidas y Tresiba</span></span><svg class="ico s muted"><use href="#i-chev"/></svg></button>
       <button class="set" id="pautaB"><span class="ic"><svg class="ico s"><use href="#i-drop"/></svg></span><span class="tx"><b>Mi ficha de tratamiento</b><span>Insulinas, parámetros, comidas, gotitas y cambios</span></span><svg class="ico s muted"><use href="#i-chev"/></svg></button>
     </div>
-    <p class="muted small" style="margin:14px 4px">diego. v7 · Midnight Energy ⚡ La app no envía tus datos a ningún servidor.</p>
+    <p class="muted small" style="margin:14px 4px">diego. v8 · Sage & Peach ⚡ La app no envía tus datos a ningún servidor.</p>
   </section>
 
   <!-- HISTORIAL -->
@@ -851,6 +880,6 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 <script src="calc.js"></script>
 <script src="store.js"></script>
 <script src="app.js"></script>
-<script src="sage-dashboard.js?v=6"></script>
+<script src="sage-dashboard.js?v=8"></script>
 </body>
 </html>

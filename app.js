@@ -127,7 +127,8 @@
     var d = new Date(), h = d.getHours();
     $("hiT").textContent = h >= 5 && h < 12 ? "¡Buenos días, Diego!" : h >= 20 || h < 5 ? "¡Buenas noches, Diego!" : "¡Hola, Diego!";
     renderDrops(h);
-    $("meals").innerHTML = C.MEALS.map(function (m) { return '<button class="chip" data-m="' + m.id + '" aria-pressed="' + (plate.meal === m.id) + '">' + ico(MEAL_ICON[m.id]) + m.name + "</button>"; }).join("");
+    $("meals").innerHTML = C.MEALS.map(function (m) { return '<button type="button" class="chip" data-m="' + m.id + '" aria-label="Armar plato para ' + esc(m.name) + '" aria-pressed="' + (plate.meal === m.id) + '">' + ico(MEAL_ICON[m.id]) + m.name + "</button>"; }).join("");
+    var status = $("mealSelectionStatus"); if (status) status.textContent = "Seleccionada: " + meal(plate.meal).name + " · Toca una comida para agregar alimentos";
     var m = meal(plate.meal), tot = plateTotal(), n = plate.items.length;
     animateNum($("total"), tot, " g HC");
     $("refHC").textContent = m.hc + " g HC";
@@ -143,7 +144,7 @@
     $("dot").textContent = n || "";
     renderNext();
   }
-  $("meals").addEventListener("click", function (e) { var b = e.target.closest("[data-m]"); if (!b) return; plate.meal = b.dataset.m; savePlate(); renderInicio(); });
+  $("meals").addEventListener("click", function (e) { var b = e.target.closest("[data-m]"); if (!b) return; plate.meal = b.dataset.m; savePlate(); renderInicio(); show("alimentos"); });
   $("plate").addEventListener("click", function (e) {
     var ed = e.target.closest("[data-edit]"); if (!ed) return;
     var k = +ed.dataset.edit, x = plate.items[k]; var f = findFood(x.fid) || { id: x.fid, name: x.name, hc100: x.hc100, unit: x.unit, kind: "plate" }; qtySheet(f, k);
@@ -523,7 +524,7 @@
     var n = C.nextEvent(new Date(), sched()); if (!n) { $("nextPill").innerHTML = ""; return; }
     $("nextPill").innerHTML = ico(n.item.basal ? "drop" : "clock") + '<span class="nx">Próxima: <b>' + esc(n.item.label.replace(" (basal)", "")) + " · " + n.item.t + '</b></span><span class="cd">' + (n.minutes <= 1 ? "¡ahora!" : "en " + C.fmtDur(n.minutes)) + "</span>";
     $("nextPill").classList.toggle("soon", n.minutes <= 30);
-    $("nextPill").setAttribute("aria-label", "Próximo: " + n.item.label + " a las " + n.item.t + ", en " + C.fmtDur(n.minutes) + ". Ver horarios");
+    $("nextPill").setAttribute("aria-label", "Próximo: " + n.item.label + " a las " + n.item.t + ", en " + C.fmtDur(n.minutes) + ". Toca para editar horarios");
     var key = n.item.t + n.item.id;
     if (lastNext && lastNext !== key) { // pasó la hora del evento anterior mientras la app estaba abierta
       var prev = sched().filter(function (x) { return x.t + x.id === lastNext; })[0];
@@ -551,6 +552,7 @@
     });
   }
   $("nextPill").addEventListener("click", scheduleSheet);
+  var editSchedule = $("editSchedule"); if (editSchedule) editSchedule.addEventListener("click", scheduleSheet);
   $("schedB").addEventListener("click", scheduleSheet);
   setInterval(function () { renderNext(); }, 30000);
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { lastNext = null; renderNext(); } });

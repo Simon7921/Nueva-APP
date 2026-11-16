@@ -136,3 +136,70 @@ html[data-mode] .toast .ico{color:#4F977D}
 }
 @media(min-width:821px){.mobile-menu-button,.mobile-menu-close,.mobile-menu-scrim{display:none!important}}
 @media(prefers-reduced-motion:reduce){.dashboard-sidebar{transition:none!important}}
+
+
+/* ===== V8 FIX: genuine theme switching, athlete switch and readable meal selector ===== */
+/* Force dark tokens after the legacy all-themes pastel declarations. */
+html[data-mode="dark"] {
+ color-scheme:dark;
+ --bg:#0C1424;--bg2:#131F32;--surface:#1B2B40;--elev:#24374D;
+ --accent:#B8FF3B;--accent-soft:#D8FF8A;--accent2:#38E1C6;
+ --on-accent:#0C1424;--accent-text:#B8FF3B;
+ --text:#F4F8FF;--text2:#C3D1E2;--muted:#A3B4C7;
+ --border:#3B4B60;--border2:#596B7E;
+ --shadow:0 10px 24px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.08);
+ --glow:0 8px 18px rgba(184,255,59,.12)
+}
+html[data-mode="dark"] body{background:radial-gradient(ellipse at 65% 0%,#21374B,#101A2A 57%,#0C1424 100%)!important;color:var(--text)!important}
+html[data-mode="dark"] .dashboard-sidebar{background:linear-gradient(170deg,#253B43,#1A2937)!important;border-color:#4E6470!important;color:#F1F8F7!important}
+html[data-mode="dark"] .sidebar-nav button{color:#D4E3E3!important}
+html[data-mode="dark"] .sidebar-nav button[aria-current=page]{background:#374D56!important;color:#C6FF65!important;border-color:#647D84!important}
+html[data-mode="dark"] .side-brand strong,html[data-mode="dark"] .side-greet strong,html[data-mode="dark"] .side-brand small,html[data-mode="dark"] .side-greet small{color:#D8EEE3!important}
+html[data-mode="dark"] .desktop-topbar h1,html[data-mode="dark"] .dashboard-section-heading h2,html[data-mode="dark"] .section-intro h2{color:#F1F8FF!important}
+html[data-mode="dark"] .soft-kicker,html[data-mode="dark"] .heading-hint{color:#B7D4C7!important}
+html[data-mode="dark"] .sage-hero{background:linear-gradient(135deg,#233F45,#164A51 65%,#1F5354)!important;border-color:#3F6F71!important;box-shadow:0 12px 28px #05111B88!important}
+html[data-mode="dark"] .sage-hero .hi,html[data-mode="dark"] .sage-hero p,html[data-mode="dark"] .sage-hero .hi2,html[data-mode="dark"] .hero-eyebrow{color:#F2F7F4!important}
+html[data-mode="dark"] .hero-cta{background:#B8FF3B!important;color:#0C1424!important}
+html[data-mode="dark"] .stat3d.mint{background:linear-gradient(145deg,#274F48,#1E3937)!important}
+html[data-mode="dark"] .stat3d.peach{background:linear-gradient(145deg,#5C3F40,#3C2D3A)!important}
+html[data-mode="dark"] .stat3d.yellow{background:linear-gradient(145deg,#4A4832,#333626)!important}
+html[data-mode="dark"] .stat3d.blue{background:linear-gradient(145deg,#304C59,#1E3546)!important}
+html[data-mode="dark"] .stat3d{color:#F6F9FF!important;border-color:#546471!important;box-shadow:0 12px 24px #07101966!important}
+html[data-mode="dark"] .stat3d .stat-label,html[data-mode="dark"] .stat3d small{color:#D0DCE4!important}
+html[data-mode="dark"] .stat3d .stat-emoji{background:#364F53!important;border-color:#637A77!important}
+html[data-mode="dark"] .card,html[data-mode="dark"] #s-inicio .plateh2,html[data-mode="dark"] #s-inicio .plist,html[data-mode="dark"] #s-inicio .savebar,html[data-mode="dark"] .food-panel,html[data-mode="dark"] .pastel-pagehead,html[data-mode="dark"] .recipe-intro,html[data-mode="dark"] .food-intro,html[data-mode="dark"] .pauta-intro,html[data-mode="dark"] #s-pauta .card{background:#1B2B40!important;color:#F5F8FC!important;border-color:#42586C!important;box-shadow:0 12px 25px #07111E88!important}
+html[data-mode="dark"] #s-inicio .plateh2 .ph-title,html[data-mode="dark"] #s-inicio .plateh2 .ph-total,html[data-mode="dark"] .pastel-pagehead .h1{color:#DCFFB2!important}
+html[data-mode="dark"] .note,html[data-mode="dark"] .dosebox,html[data-mode="dark"] #s-pauta .dosebox{background:#14263A!important;color:#F5F8FC!important;border-color:#536A7C!important}
+html[data-mode="dark"] .btn-secondary,html[data-mode="dark"] .btn-ghost,html[data-mode="dark"] .ibtn,html[data-mode="dark"] .back,html[data-mode="dark"] .avatar,html[data-mode="dark"] .savebar,html[data-mode="dark"] .set .ic,html[data-mode="dark"] .mgrid .chip,html[data-mode="dark"] #s-inicio .mgrid .chip,html[data-mode="dark"] .chip,html[data-mode="dark"] #s-alimentos .chips .chip{background:#283A4E!important;color:#F0F6FF!important;border-color:#4C6475!important;box-shadow:inset 0 1px rgba(255,255,255,.06)!important}
+html[data-mode="dark"] #s-inicio .mgrid .chip[aria-pressed=true],html[data-mode="dark"] .chip[aria-pressed=true],html[data-mode="dark"] #s-alimentos .chips .chip[aria-pressed=true]{background:#B8FF3B!important;color:#0C1424!important;border-color:#B8FF3B!important}
+html[data-mode="dark"] .btn-primary{background:#B8FF3B!important;color:#0C1424!important;border-color:#B8FF3B!important}
+html[data-mode="dark"] .in,html[data-mode="dark"] .inp input,html[data-mode="dark"] select.in,html[data-mode="dark"] textarea.in{background:#101F32!important;color:#F5F8FC!important;border-color:#53667B!important}
+html[data-mode="dark"] .seg{background:#15263B!important}
+html[data-mode="dark"] .seg button{color:#F5F8FC!important}
+html[data-mode="dark"] .seg button[aria-pressed=true]{background:#B8FF3B!important;color:#102134!important}
+html[data-mode="dark"] .li .mt,html[data-mode="dark"] .t2,html[data-mode="dark"] .small{color:#C0CFDF!important}
+html[data-mode="dark"] #foods .li,html[data-mode="dark"] #recipes>.card{background:#25364B!important;color:#F3F8FF!important;border-color:#415C70!important}
+html[data-mode="dark"] .nav .in{background:#1A2D40!important;border-color:#4B6175!important}
+html[data-mode="dark"] .nav button{color:#C6D5E2!important}
+html[data-mode="dark"] .nav button[aria-current=page]{background:#B8FF3B!important;color:#102134!important}
+html[data-mode="dark"] .sheet{background:#15263A!important;color:#F3F8FF!important}
+html[data-mode="dark"] .sheet h3{color:#F5FAFC!important}
+html[data-mode="dark"] .toast{background:#23394B!important;color:#F6F9FF!important}
+html[data-mode="dark"] .mobile-menu-button{background:#273F4A!important;color:#F6F9FF!important;border-color:#56747F!important}
+html[data-mode="dark"] .sidebar-bottom{background:#30483F!important;color:#F5F9F7!important}
+html[data-mode="dark"] .nextbar,html[data-mode="dark"] #s-inicio .nextbar{background:#1B3542!important;color:#F4F9FF!important;border-color:#4D7477!important}
+html[data-mode="dark"] #s-inicio .nextbar .ico,html[data-mode="dark"] #s-inicio .nextbar .cd{color:#B8FF3B!important}
+html[data-mode="dark"] .schedule-edit{background:#29414E!important;color:#E5F4F5!important;border-color:#5B7682!important}
+/* Athlete changes the actual illustration, not just a hidden old SVG. */
+.sage-bike-figure{display:none;position:absolute;right:3%;bottom:-5%;font-size:clamp(120px,17vw,260px);line-height:1;transform:rotate(-7deg);z-index:1;filter:drop-shadow(0 14px 16px rgba(64,76,75,.24));pointer-events:none}
+html:not(.fig-ball) .sage-hero .sage-player{display:none!important}
+html:not(.fig-ball) .sage-hero .sage-bike-figure{display:block!important}
+html.fig-ball .sage-hero .sage-bike-figure{display:none!important}
+html.fig-ball .sage-hero .sage-player{display:block!important}
+/* Comidas: let text wrap naturally; remove competing absolute subtitles. */
+html[data-mode] #s-inicio .mgrid{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important;align-items:stretch!important;margin-bottom:18px!important}
+html[data-mode] #s-inicio .mgrid .chip{position:relative!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:5px!important;min-width:0!important;min-height:78px!important;height:auto!important;padding:11px 5px!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;font-size:clamp(11px,1.2vw,14px)!important;line-height:1.25!important;text-align:center!important;overflow:visible!important}
+html[data-mode] #s-inicio .mgrid .chip::after{content:none!important;display:none!important}
+html[data-mode] #s-inicio .mgrid .chip .ico{flex:none!important;width:22px!important;height:22px!important}
+@media(max-width:700px){html[data-mode] #s-inicio .mgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}html[data-mode] #s-inicio .mgrid .chip{font-size:14px!important;min-height:72px!important;padding:10px 4px!important}}
+@media(max-width:390px){html[data-mode] #s-inicio .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}html[data-mode] #s-inicio .mgrid .chip{font-size:15px!important}}

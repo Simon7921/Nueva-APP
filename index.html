@@ -600,10 +600,28 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 @media(max-width:360px){html[data-mode] #s-inicio .mast2 .mast-player{height:218px!important;right:-30px!important}html[data-mode] #s-inicio .mast2{min-height:219px}html[data-mode] #s-inicio .mast2 .hi{font-size:27px!important}}
 
 </style>
-<link rel="stylesheet" href="sage-dashboard.css?v=2">
-</head>
+<link rel="stylesheet" href="sage-dashboard.css?v=6">
+<style>
+/* Navegación y flujo de alimentos - versión V6 */
+.food-walkthrough{border:1px solid #D7E3D3;border-radius:22px;padding:16px;background:linear-gradient(120deg,#E5F2E6,#FFF9EC);box-shadow:0 8px 20px #8A9C8A18;margin:12px 0 16px;color:#42675B}
+.food-walkthrough>strong{display:block;font-size:18px;margin-bottom:10px;color:#3A695B}
+.food-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.food-steps span{border-radius:13px;background:#FFFDF6;padding:10px 8px;font-size:12px;line-height:1.3;color:#705D52;font-weight:650}
+.food-steps b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#CCDFCD;color:#386451;margin-bottom:6px}
+.food-walkthrough p{margin:10px 0 0;font-size:13px;color:#6B7467}
+.food-finish{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border-radius:20px;background:#E4F0EA;border:1px solid #CCDCCF;margin:14px 0}
+.food-finish b,.food-finish small{display:block;color:#3E6154}.food-finish small{font-size:12px;margin-top:4px}.food-finish .btn{min-height:48px;width:auto;white-space:nowrap;flex:none;padding:0 15px;font-size:14px;background:#BBD8C5!important;color:#264838!important}
+@media(max-width:820px){
+  #mobileMenuButton{position:fixed!important;z-index:100!important;display:flex!important;align-items:center;visibility:visible!important;pointer-events:auto!important}
+  #mainSidebar{z-index:102!important}
+  #mobileMenuScrim:not([hidden]){z-index:101!important}
+  .food-steps{grid-template-columns:1fr;gap:6px}.food-steps span{display:flex;align-items:center;gap:10px;padding:7px 10px}.food-steps b{margin:0;flex:none;width:24px;height:24px}
+  .food-finish{position:sticky;bottom:calc(82px + env(safe-area-inset-bottom));z-index:15;box-shadow:0 8px 25px #56827322}
+}
+@media(max-width:380px){.food-finish{flex-direction:column;align-items:stretch}.food-finish .btn{width:100%}}
+</style></head>
 <body>
-<button type="button" id="mobileMenuButton" class="mobile-menu-button" aria-label="Abrir menú de secciones" aria-controls="mainSidebar" aria-expanded="false"><span aria-hidden="true">☰</span><span>Menú</span></button>
+<button type="button" id="mobileMenuButton" class="mobile-menu-button" aria-label="Abrir menú con todas las secciones" aria-controls="mainSidebar" aria-expanded="false"><span aria-hidden="true">☰</span><span>Menú</span></button>
 <div id="mobileMenuScrim" class="mobile-menu-scrim" hidden></div>
 <aside class="dashboard-sidebar" id="mainSidebar" aria-label="Navegación principal">
   <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="Cerrar menú">✕</button><div class="side-brand"><span class="side-logo">D<span>●</span></span><div><strong>Diego</strong><small>Mi espacio</small></div></div>
@@ -629,15 +647,14 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
   <section class="screen pastel-home" id="s-inicio" hidden aria-labelledby="hiT">
 <header class="sage-hero" aria-labelledby="hiT">
       <div class="hero-copy">
-        <span class="hero-eyebrow">TU ESPACIO · DIEGO</span>
+        <span class="hero-eyebrow">TU ESPACIO · DIEGO · UX V6</span>
         <h1 class="hi" id="hiT">¡Hola, Diego!</h1>
         <div class="hi2" id="hello">¡Vamos, Diego! ⚽</div>
         <p>¿Qué comeremos hoy? Armemos algo rico.</p>
         <button class="hero-cta" data-go="alimentos"><svg class="ico s"><use href="#i-plus"/></svg> Armar mi plato</button>
       </div>
       <img class="sage-player" src="player-soft-pastel.webp" alt="Ilustración 3D de futbolista juvenil con pelota" />
-      <button class="nextbar" id="nextPill" aria-label="Ver horarios"></button>
-    </header>
+      </header>
     <div class="nextbar-shell"><button class="nextbar" id="nextPill" aria-label="Ver horarios"></button></div>
     <div class="section-intro"><div class="dashboard-section-heading"><div><span class="soft-kicker">ORGANIZA TU DÍA</span><h2>Elige tu comida</h2></div><span class="heading-hint">Un paso a la vez ✨</span></div><span class="intro-spark" aria-hidden="true">✦</span></div>
     <div class="mgrid" id="meals" role="group" aria-label="Comida"></div>
@@ -695,10 +712,16 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
   <section class="screen" id="s-alimentos" hidden>
     <header class="top pastel-pagehead"><div><div class="eyebrow">EXPLORA · COMBINA · DISFRUTA</div><h1 class="h1">Alimentos <span aria-hidden="true">🍎</span></h1><div class="hello" id="addingTo"></div></div><button class="avatar" data-go="perfil" aria-label="Perfil y configuración">D</button></header>
     <div class="food-intro" aria-hidden="true"><div class="food-illus">🥐 <span>🍎</span> 🥛</div><div><b>¡Arma algo rico!</b><small>Tus alimentos, todos a mano</small></div></div>
+    <div class="food-walkthrough" aria-label="Cómo preparar tu plato">
+      <strong>¡Vamos a armar tu plato! 🍽️</strong>
+      <div class="food-steps"><span><b>1</b> Busca un alimento</span><span><b>2</b> Toca + y pon la cantidad</span><span><b>3</b> Presiona “Agregar al plato”</span></div>
+      <p>Después puedes agregar otro alimento o volver a ver tu plato.</p>
+    </div>
     <div class="search"><div class="inp"><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Busca lo que vas a comer" autocomplete="off" aria-label="Buscar alimento"></div></div>
     <div class="chips" id="cats" role="group" aria-label="Filtros"></div>
     <div class="food-list-head"><strong>Busca y agrega</strong><span>Porciones ajustables</span></div>
     <div class="card food-panel" style="padding-top:4px;padding-bottom:4px"><ul class="list" id="foods"></ul></div>
+    <div class="food-finish"><div><b>Tu plato está en marcha</b><small>Cuando termines de elegir, revisa el resumen.</small></div><button type="button" class="btn btn-primary" data-go="inicio" id="viewPlateButton">Ver mi plato →</button></div>
     <button class="btn btn-ghost" id="newFood" style="margin-top:12px"></button>
     <p class="muted small" style="margin:10px 4px">Valores por 100 g o 100 ml, con su fuente. Tip: la fruta se pesa sin cáscara ni pepas, y "cocido" o "crudo" te dice cómo pesarlo.</p>
   </section>
@@ -828,6 +851,6 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 <script src="calc.js"></script>
 <script src="store.js"></script>
 <script src="app.js"></script>
-<script src="sage-dashboard.js"></script>
+<script src="sage-dashboard.js?v=6"></script>
 </body>
 </html>

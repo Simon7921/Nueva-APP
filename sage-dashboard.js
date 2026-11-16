@@ -25,21 +25,24 @@ function syncPlate(){
   }
 }
 
-// Mobile sidebar with keyboard and focus support.
+// Menú móvil: independiente de navegación y compatible con Safari/iPhone.
 const menuButton=qs('#mobileMenuButton'),menuClose=qs('#mobileMenuClose');
 const menuScrim=qs('#mobileMenuScrim'),menuSide=qs('#mainSidebar');
-function closeMenu(){if(!menuSide||!menuButton)return;const wasOpen=menuSide.classList.contains('is-open');menuSide.classList.remove('is-open');menuButton.setAttribute('aria-expanded','false');document.body.classList.remove('mobile-menu-open');if(menuScrim)menuScrim.hidden=true;if(wasOpen)menuButton.focus({preventScroll:true})}
-function openMenu(){if(!menuSide||!menuButton)return;menuSide.classList.add('is-open');menuButton.setAttribute('aria-expanded','true');document.body.classList.add('mobile-menu-open');if(menuScrim)menuScrim.hidden=false;menuClose?.focus({preventScroll:true})}
-menuButton?.addEventListener('click',()=>menuSide.classList.contains('is-open')?closeMenu():openMenu());
-menuClose?.addEventListener('click',closeMenu);
-menuScrim?.addEventListener('click',closeMenu);
-menuSide?.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',closeMenu));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuSide?.classList.contains('is-open'))closeMenu()});
-window.addEventListener('resize',()=>{if(innerWidth>820)closeMenu()});
-
-const plate=qs('#plate');if(plate)new MutationObserver(syncPlate).observe(plate,{childList:true,subtree:true});
+function menuOpen(){return !!(menuSide && menuSide.classList.contains('is-open'))}
+function closeMenu(restoreFocus){if(!menuSide)return;menuSide.classList.remove('is-open');if(menuButton)menuButton.setAttribute('aria-expanded','false');document.body.classList.remove('mobile-menu-open');if(menuScrim)menuScrim.hidden=true;if(restoreFocus && menuButton)menuButton.focus()}
+function openMenu(){if(!menuSide)return;menuSide.classList.add('is-open');if(menuButton)menuButton.setAttribute('aria-expanded','true');document.body.classList.add('mobile-menu-open');if(menuScrim)menuScrim.hidden=false;if(menuClose)menuClose.focus()}
+if(menuButton)menuButton.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();menuOpen()?closeMenu(true):openMenu()});
+if(menuClose)menuClose.addEventListener('click',function(e){e.preventDefault();closeMenu(true)});
+if(menuScrim)menuScrim.addEventListener('click',function(){closeMenu(true)});
+if(menuSide)menuSide.addEventListener('click',function(e){if(e.target.closest('[data-go]'))closeMenu(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape' && menuOpen())closeMenu(true)});
+window.addEventListener('resize',function(){if(window.innerWidth>820 && menuOpen())closeMenu(false)});
+// Mantener una salida visible del catálogo a Inicio y el total de alimentos.
+const viewPlate=qs('#viewPlateButton');
+function refreshPlateButton(){if(!viewPlate)return;const n=qs('#plate')?qs('#plate').querySelectorAll('li.li').length:0;viewPlate.textContent=n?'Ver mi plato ('+n+') →':'Ver mi plato →'}
+const plate=qs('#plate');if(plate)new MutationObserver(function(){syncPlate();refreshPlateButton()}).observe(plate,{childList:true,subtree:true});
 const total=qs('#total');if(total)new MutationObserver(syncPlate).observe(total,{childList:true,characterData:true,subtree:true});
 window.addEventListener('hashchange',syncNav);window.addEventListener('popstate',syncNav);
 document.addEventListener('click',e=>{if(e.target.closest('[data-go]'))requestAnimationFrame(syncNav)});
-syncNav();syncPlate();
+syncNav();syncPlate();refreshPlateButton();
 })();

@@ -203,3 +203,89 @@ html[data-mode] #s-inicio .mgrid .chip::after{content:none!important;display:non
 html[data-mode] #s-inicio .mgrid .chip .ico{flex:none!important;width:22px!important;height:22px!important}
 @media(max-width:700px){html[data-mode] #s-inicio .mgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}html[data-mode] #s-inicio .mgrid .chip{font-size:14px!important;min-height:72px!important;padding:10px 4px!important}}
 @media(max-width:390px){html[data-mode] #s-inicio .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}html[data-mode] #s-inicio .mgrid .chip{font-size:15px!important}}
+
+
+/* V9 · INICIO MÓVIL: contenido siempre desplazable y comidas visibles */
+@media (max-width: 820px) {
+  html.fit, html.fit body, html[data-mode].fit, html[data-mode].fit body {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto !important;
+  }
+  html.fit .wrap, html[data-mode].fit .wrap {
+    height: auto !important;
+    min-height: 100dvh !important;
+    display: block !important;
+    padding-bottom: calc(104px + env(safe-area-inset-bottom)) !important;
+    overflow: visible !important;
+  }
+  html.fit #s-inicio, html[data-mode].fit #s-inicio {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  html.fit #s-inicio .plist, html[data-mode].fit #s-inicio .plist {
+    flex: initial !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    max-height: 420px !important;
+  }
+  html[data-mode] #s-inicio .sage-hero {
+    min-height: 164px !important;
+    margin-bottom: 12px !important;
+    padding: 14px 17px !important;
+    border-radius: 24px !important;
+  }
+  html[data-mode] #s-inicio .sage-hero .hi {
+    font-size: clamp(23px, 6.2vw, 31px) !important;
+    margin: 2px 0 4px !important;
+  }
+  #s-inicio .sage-hero .hero-eyebrow {font-size: 9px !important;}
+  #s-inicio .sage-hero .hi2 {font-size: 13px !important;}
+  #s-inicio .sage-hero .hero-copy p {font-size: 11px !important; margin: 5px 0 8px !important;}
+  #s-inicio .sage-hero .hero-cta {min-height: 36px !important; font-size: 12px !important;}
+  #s-inicio .sage-hero .sage-player {height: 198px !important;right: -4px !important;bottom:-30px !important;}
+  #s-inicio .schedule-control {margin: 0 0 10px !important;gap: 6px !important;}
+  #s-inicio .schedule-control .nextbar {flex: 1 1 175px !important;min-height: 43px !important;}
+  #s-inicio .schedule-control .schedule-edit {flex: 0 0 auto !important;min-height:43px !important;padding:0 11px !important;margin:0 !important;}
+  #s-inicio .section-intro {margin-top: 8px !important;margin-bottom: 5px !important;}
+  #s-inicio .section-intro .dashboard-section-heading {margin: 0 0 8px !important;}
+  #s-inicio .section-intro h2 {font-size: 19px !important;line-height:1.15 !important;}
+  #s-inicio .meal-helper {font-size: 12px !important;margin-top: 3px !important;}
+  html[data-mode] #s-inicio .mgrid {
+    display: grid !important;
+    grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+    gap: 8px !important;
+    margin: 0 0 8px !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+  html[data-mode] #s-inicio .mgrid .chip {
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 72px !important;
+    height: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 10px 5px !important;
+    font-size: clamp(12px, 3.4vw, 15px) !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: auto !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+  #s-inicio .mgrid .chip .ico {width:20px !important;height:20px !important;}
+  #s-inicio .meal-selection-status {font-size: 12px !important;padding-bottom: 6px !important;}
+}
+@media (max-width: 355px) {
+  html[data-mode] #s-inicio .mgrid {grid-template-columns: repeat(2,minmax(0,1fr)) !important;}
+  #s-inicio .sage-hero .sage-player {height:180px !important;right:-30px !important;}
+}

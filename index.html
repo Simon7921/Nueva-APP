@@ -752,12 +752,30 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
     <div class="card food-panel" style="padding-top:4px;padding-bottom:4px"><ul class="list" id="foods"></ul></div>
     <div class="food-finish"><div><b>Tu plato está en marcha</b><small>Cuando termines de elegir, revisa el resumen.</small></div><button type="button" class="btn btn-primary" data-go="inicio" id="viewPlateButton">Ver mi plato →</button></div>
     <div class="photo-entry card" style="margin-top:14px;padding:16px">
-      <strong style="display:block;margin-bottom:5px">📷 Agregar con una foto</strong>
-      <p class="muted small" style="margin:0 0 12px">Toma o elige una foto. La app te guía a registrar sus datos; el reconocimiento automático de imágenes aún no está conectado.</p>
-      <div class="grid2" style="gap:10px">
-        <button class="btn btn-secondary" id="photoLabelBtn" type="button">📦 Foto de etiqueta</button>
-        <button class="btn btn-secondary" id="photoPlateBtn" type="button">🍽️ Foto del plato</button>
-      </div>
+      <strong style="display:block;margin-bottom:6px">📷 Agregar con una foto</strong>
+      <p class="muted small" style="margin:0 0 12px">Elige una imagen desde tu teléfono. La cámara y el selector funcionan mejor abriendo esta aplicación desde GitHub Pages en Safari o Chrome.</p>
+      <details class="photo-panel" id="labelPhotoPanel" style="border:1px solid var(--border2);border-radius:16px;padding:12px;margin-bottom:10px">
+        <summary style="font-weight:800;cursor:pointer;min-height:38px;display:list-item">📦 Foto de etiqueta nutricional</summary>
+        <label class="f" for="labelPhotoInput" style="margin-top:14px">Abrir cámara o elegir fotografía</label>
+        <input class="in s" id="labelPhotoInput" type="file" accept="image/*" aria-label="Elegir foto de etiqueta" style="display:block;width:100%">
+        <img id="labelPhotoPreview" hidden alt="Vista previa de la etiqueta" style="max-width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin:10px auto">
+        <p class="t2 small">Transcribe los datos de la etiqueta. Esta versión no lee automáticamente el texto de la foto.</p>
+        <label class="f" for="labelFoodName">Nombre del producto</label><input class="in s" id="labelFoodName" placeholder="Ej. Néctar de piña">
+        <label class="f" for="labelHC" style="margin-top:10px">Carbohidratos declarados (g)</label><input class="in s" id="labelHC" inputmode="decimal" placeholder="Ej. 6,4">
+        <label class="f" for="labelBasis" style="margin-top:10px">Valor de referencia</label>
+        <select class="in s" id="labelBasis"><option value="unit">Por unidad / porción</option><option value="100">Por 100 g o 100 ml</option></select>
+        <label class="f" for="labelSize" style="margin-top:10px">Contenido de una unidad (g o ml)</label><input class="in s" id="labelSize" inputmode="decimal" placeholder="Ej. 190">
+        <p class="err" id="labelPhotoError" role="alert"></p>
+        <button type="button" class="btn btn-primary" id="labelSaveBtn" style="margin-top:10px;width:100%">Guardar alimento</button>
+      </details>
+      <details class="photo-panel" id="platePhotoPanel" style="border:1px solid var(--border2);border-radius:16px;padding:12px">
+        <summary style="font-weight:800;cursor:pointer;min-height:38px;display:list-item">🍽️ Foto del plato</summary>
+        <label class="f" for="platePhotoInput" style="margin-top:14px">Abrir cámara o elegir fotografía</label>
+        <input class="in s" id="platePhotoInput" type="file" accept="image/*" aria-label="Elegir foto del plato" style="display:block;width:100%">
+        <img id="platePhotoPreview" hidden alt="Vista previa del plato" style="max-width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin:10px auto">
+        <p class="t2 small">La fotografía es solo una referencia visual. No es posible calcular con precisión los HC sin conocer ingredientes y cantidades.</p>
+        <button type="button" class="btn btn-primary" id="plateChooseFoods" style="margin-top:10px;width:100%">Buscar ingredientes del plato</button>
+      </details>
     </div>
     <button class="btn btn-ghost" id="newFood" style="margin-top:12px"></button>
     <p class="muted small" style="margin:10px 4px">Valores por 100 g o 100 ml, con su fuente. Tip: la fruta se pesa sin cáscara ni pepas, y "cocido" o "crudo" te dice cómo pesarlo.</p>

@@ -285,69 +285,41 @@
   }
 
 
-  /* ================= FOTOS: apoyo visual local, sin inferir HC automáticamente ================= */
-  function bindPhotoPreview(b, id) {
-    var pick = b.querySelector("#" + id), preview = b.querySelector("#photoPreview"), currentURL = null;
-    if (!pick || !preview) return;
-    pick.addEventListener("change", function () {
-      if (currentURL) URL.revokeObjectURL(currentURL);
-      var f = pick.files && pick.files[0];
-      if (!f) { preview.hidden = true; return; }
-      if (!f.type.startsWith("image/")) { preview.hidden = true; return; }
-      currentURL = URL.createObjectURL(f);
-      preview.src = currentURL;
-      preview.hidden = false;
+  /* Fotos V12: selectors nativos visibles; no dependen de ventanas emergentes. */
+  function attachPhotoPreview(inputId, imageId) {
+    var input = $(inputId), preview = $(imageId), url = null;
+    if (!input || !preview) return;
+    input.addEventListener("change", function () {
+      if (url) { URL.revokeObjectURL(url); url = null; }
+      var file = input.files && input.files[0];
+      if (!file || !file.type.startsWith("image/")) { preview.hidden = true; preview.removeAttribute("src"); return; }
+      url = URL.createObjectURL(file);
+      preview.src = url; preview.hidden = false;
+      preview.style.display = "block";
     });
   }
-  $("photoLabelBtn").addEventListener("click", function () {
-    openSheet('<h3 id="shT">📦 Foto de etiqueta</h3>' +
-      '<p class="t2 small">Toma una foto para consultar visualmente la tabla. Ingresa los valores que dice la etiqueta; esta versión no los extrae automáticamente.</p>' +
-      '<label class="f" for="photoInput">Fotografía de la etiqueta</label>' +
-      '<input class="in s" id="photoInput" type="file" accept="image/*" capture="environment">' +
-      '<img id="photoPreview" hidden alt="Vista previa de la etiqueta" style="max-width:100%;max-height:200px;object-fit:contain;border-radius:14px;margin:12px auto">' +
-      '<label class="f" for="photoFood">Nombre del producto</label><input class="in s" id="photoFood" placeholder="Ej. Yogur de frutilla">' +
-      '<label class="f" for="photoValue" style="margin-top:10px">HC declarados en la etiqueta (g)</label><input class="in s" id="photoValue" inputmode="decimal" placeholder="Ej. 6,4">' +
-      '<label class="f" for="photoBasis" style="margin-top:10px">¿A qué corresponde ese valor?</label>' +
-      '<select id="photoBasis" class="in s"><option value="100">Por 100 g / 100 ml</option><option value="unit">Por porción o unidad</option></select>' +
-      '<label class="f" for="photoSize" style="margin-top:10px">Cantidad de una unidad (g o ml)</label><input class="in s" id="photoSize" inputmode="decimal" placeholder="Ej. 190">' +
-      '<p class="t2 small">Si eliges «por porción», la cantidad es obligatoria para convertir a 100 g o 100 ml.</p>' +
-      '<div class="err" id="photoError" role="alert"></div><button class="btn btn-primary" id="photoSave" style="margin-top:12px">Guardar en Mis alimentos</button>',
-      function (b) {
-        bindPhotoPreview(b, "photoInput");
-        b.querySelector("#photoSave").onclick = function () {
-          var name = b.querySelector("#photoFood").value.trim();
-          var v = C.num(b.querySelector("#photoValue").value);
-          var sz = C.num(b.querySelector("#photoSize").value);
-          var byUnit = b.querySelector("#photoBasis").value === "unit";
-          var err = b.querySelector("#photoError");
-          if (!name) { err.textContent = "Escribe el nombre del producto."; return; }
-          if (!(v >= 0 && isFinite(v))) { err.textContent = "Ingresa los gramos de HC de la etiqueta."; return; }
-          if (byUnit && !(sz > 0)) { err.textContent = "Especifica la cantidad que contiene una unidad."; return; }
-          var per100 = byUnit ? v * 100 / sz : v;
-          if (!(per100 >= 0 && per100 <= 100)) { err.textContent = "Revisa los valores: el resultado por 100 g/ml debe estar entre 0 y 100 g HC."; return; }
-          custom = S.upsertCustom(custom, { name: name, hc100: per100, unit: sz > 0 ? sz : null, source: "Tabla nutricional transcrita desde foto (verificar con envase)" });
-          S.saveCustom(custom);
-          closeSheet(); ui.cat = "Mis alimentos"; ui.q = ""; $("q").value = "";
-          renderFoods(); toast(name + " guardado", "check");
-        };
-      }
-    );
+  attachPhotoPreview("labelPhotoInput", "labelPhotoPreview");
+  attachPhotoPreview("platePhotoInput", "platePhotoPreview");
+  $("labelSaveBtn").addEventListener("click", function () {
+    var name = $("labelFoodName").value.trim(), hc = C.num($("labelHC").value);
+    var unit = C.num($("labelSize").value), byUnit = $("labelBasis").value === "unit";
+    var err = $("labelPhotoError"); err.textContent = "";
+    if (!name) { err.textContent = "Escribe el nombre del producto."; return; }
+    if (!(hc >= 0 && isFinite(hc))) { err.textContent = "Ingresa los gramos de HC indicados en la tabla."; return; }
+    if (byUnit && !(unit > 0)) { err.textContent = "Ingresa el tamaño de la porción o unidad."; return; }
+    var per100 = byUnit ? hc * 100 / unit : hc;
+    if (!(per100 >= 0 && per100 <= 100)) { err.textContent = "Revisa el valor: los HC por 100 g/ml deben estar entre 0 y 100 g."; return; }
+    custom = S.upsertCustom(custom, { name: name, hc100: per100, unit: unit > 0 ? unit : null, source: "Etiqueta nutricional ingresada manualmente (verificar envase)" });
+    S.saveCustom(custom);
+    ui.cat = "Mis alimentos"; ui.q = ""; $("q").value = "";
+    $("labelPhotoPanel").open = false;
+    renderFoods(); toast("Alimento guardado: " + name, "check");
   });
-  $("photoPlateBtn").addEventListener("click", function () {
-    openSheet('<h3 id="shT">🍽️ Foto de tu plato</h3>' +
-      '<p class="t2 small">Toma la foto como referencia. Para estimar carbohidratos hace falta identificar alimentos y cantidades: una foto sola no permite medirlos con precisión.</p>' +
-      '<label class="f" for="platePhoto">Fotografía del plato</label>' +
-      '<input class="in s" id="platePhoto" type="file" accept="image/*" capture="environment">' +
-      '<img id="photoPreview" hidden alt="Vista previa del plato" style="max-width:100%;max-height:200px;object-fit:contain;border-radius:14px;margin:12px auto">' +
-      '<p class="t2 small" style="margin-top:12px">Para obtener una estimación con IA, puedes compartir la foto en ChatGPT y después añadir aquí cada alimento con sus cantidades. No uses la foto como única base para calcular dosis de insulina.</p>' +
-      '<button class="btn btn-primary" id="plateGoFoods" style="margin-top:12px">Elegir alimentos y cantidades</button>', function (b) {
-        bindPhotoPreview(b, "platePhoto");
-        b.querySelector("#plateGoFoods").onclick = function () {
-          closeSheet(); ui.cat = "Todos"; ui.q = ""; $("q").value = ""; renderFoods();
-          toast("Busca cada ingrediente para armar tu plato", "info");
-        };
-      }
-    );
+  $("plateChooseFoods").addEventListener("click", function () {
+    $("platePhotoPanel").open = false;
+    ui.cat = "Todos"; ui.q = ""; $("q").value = "";
+    renderFoods(); $("q").focus();
+    toast("Busca cada ingrediente del plato", "info");
   });
 
   /* ================= 3. CONSTRUCTOR DE RECETAS ================= */

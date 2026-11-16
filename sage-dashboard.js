@@ -24,6 +24,19 @@ function syncPlate(){
     wrap.append(label,track,val);bars.append(wrap)
   }
 }
+
+// Mobile sidebar with keyboard and focus support.
+const menuButton=qs('#mobileMenuButton'),menuClose=qs('#mobileMenuClose');
+const menuScrim=qs('#mobileMenuScrim'),menuSide=qs('#mainSidebar');
+function closeMenu(){if(!menuSide||!menuButton)return;const wasOpen=menuSide.classList.contains('is-open');menuSide.classList.remove('is-open');menuButton.setAttribute('aria-expanded','false');document.body.classList.remove('mobile-menu-open');if(menuScrim)menuScrim.hidden=true;if(wasOpen)menuButton.focus({preventScroll:true})}
+function openMenu(){if(!menuSide||!menuButton)return;menuSide.classList.add('is-open');menuButton.setAttribute('aria-expanded','true');document.body.classList.add('mobile-menu-open');if(menuScrim)menuScrim.hidden=false;menuClose?.focus({preventScroll:true})}
+menuButton?.addEventListener('click',()=>menuSide.classList.contains('is-open')?closeMenu():openMenu());
+menuClose?.addEventListener('click',closeMenu);
+menuScrim?.addEventListener('click',closeMenu);
+menuSide?.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',closeMenu));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menuSide?.classList.contains('is-open'))closeMenu()});
+window.addEventListener('resize',()=>{if(innerWidth>820)closeMenu()});
+
 const plate=qs('#plate');if(plate)new MutationObserver(syncPlate).observe(plate,{childList:true,subtree:true});
 const total=qs('#total');if(total)new MutationObserver(syncPlate).observe(total,{childList:true,characterData:true,subtree:true});
 window.addEventListener('hashchange',syncNav);window.addEventListener('popstate',syncNav);

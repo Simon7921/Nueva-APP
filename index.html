@@ -600,11 +600,13 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 @media(max-width:360px){html[data-mode] #s-inicio .mast2 .mast-player{height:218px!important;right:-30px!important}html[data-mode] #s-inicio .mast2{min-height:219px}html[data-mode] #s-inicio .mast2 .hi{font-size:27px!important}}
 
 </style>
-<link rel="stylesheet" href="sage-dashboard.css?v=1">
+<link rel="stylesheet" href="sage-dashboard.css?v=2">
 </head>
 <body>
-<aside class="dashboard-sidebar" aria-label="Navegación principal">
-  <div class="side-brand"><span class="side-logo">D<span>●</span></span><div><strong>Diego</strong><small>Mi espacio</small></div></div>
+<button type="button" id="mobileMenuButton" class="mobile-menu-button" aria-label="Abrir menú de secciones" aria-controls="mainSidebar" aria-expanded="false"><span aria-hidden="true">☰</span><span>Menú</span></button>
+<div id="mobileMenuScrim" class="mobile-menu-scrim" hidden></div>
+<aside class="dashboard-sidebar" id="mainSidebar" aria-label="Navegación principal">
+  <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="Cerrar menú">✕</button><div class="side-brand"><span class="side-logo">D<span>●</span></span><div><strong>Diego</strong><small>Mi espacio</small></div></div>
   <div class="side-avatar"><img src="player-soft-pastel.webp" alt="Futbolista de Diego" /></div>
   <div class="side-greet"><strong>¡Hola, Diego! 👋</strong><small>Tu día, a tu manera</small></div>
   <nav class="sidebar-nav" aria-label="Menú principal">

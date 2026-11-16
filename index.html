@@ -614,7 +614,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
 @media(max-width:360px){#s-inicio .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 </style>
-<link rel="stylesheet" href="sage-dashboard.css?v=9">
+<link rel="stylesheet" href="sage-dashboard.css?v=14">
 <style>
 /* Navegación y flujo de alimentos - versión V6 */
 .food-walkthrough{border:1px solid #D7E3D3;border-radius:22px;padding:16px;background:linear-gradient(120deg,#E5F2E6,#FFF9EC);box-shadow:0 8px 20px #8A9C8A18;margin:12px 0 16px;color:#42675B}
@@ -675,7 +675,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
   <section class="screen pastel-home" id="s-inicio" hidden aria-labelledby="hiT">
 <header class="sage-hero" aria-labelledby="hiT">
       <div class="hero-copy">
-        <span class="hero-eyebrow">TU ESPACIO · DIEGO · V9</span>
+        <span class="hero-eyebrow">TU ESPACIO · DIEGO</span>
         <h1 class="hi" id="hiT">¡Hola, Diego!</h1>
         <div class="hi2" id="hello">¡Vamos, Diego! ⚽</div>
         <p>¿Qué comeremos hoy? Armemos algo rico.</p>
@@ -826,7 +826,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
     <header class="top"><div class="row"><button class="back" data-go="inicio" aria-label="Volver a Inicio"><svg class="ico"><use href="#i-back"/></svg></button><div><h1 class="h1">Perfil</h1><div class="hello">Tu app, a tu manera</div></div></div></header>
     <div class="card hero row"><div class="avatar" style="width:56px;height:56px;font-size:22px" aria-hidden="true">D</div><div><b style="font-size:19px">Diego</b><div class="t2 small">Tus datos se quedan en este teléfono 🔒</div></div></div>
     <div class="sect">Apariencia</div>
-    <div class="card"><div class="seg full" id="themeSeg" role="group" aria-label="Tema"><button data-v="dark">Midnight oscuro</button><button data-v="light">Claro</button></div><div class="t2 small" style="margin:12px 2px 6px">Figura del encabezado</div><div class="seg full" id="figSeg" role="group" aria-label="Figura del encabezado"><button data-v="bike">🚴 Ciclista</button><button data-v="ball">⚽ Pelota</button></div></div>
+    <div class="card"><div class="seg full" id="themeSeg" role="group" aria-label="Tema"><button type="button" data-v="dark" onclick="window.diegoChooseTheme('dark')">Midnight oscuro</button><button type="button" data-v="light" onclick="window.diegoChooseTheme('light')">Claro</button></div><div class="t2 small" style="margin:12px 2px 6px">Figura del encabezado</div><div class="seg full" id="figSeg" role="group" aria-label="Figura del encabezado"><button type="button" data-v="bike" onclick="window.diegoChooseFigure('bike')">🚴 Ciclista</button><button type="button" data-v="ball" onclick="window.diegoChooseFigure('ball')">⚽ Pelota</button></div></div>
     <div class="sect">Unidades de medida</div>
     <div class="card"><div class="kv"><span>Carbohidratos</span><b>gramos (g HC)</b></div><div class="kv"><span>Glicemia</span><b>mg/dL</b></div>
       <div class="row" style="margin-top:8px"><span class="sp">Cantidad al agregar alimentos con unidad</span></div>
@@ -845,7 +845,7 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
       <button class="set" id="schedB"><span class="ic"><svg class="ico s"><use href="#i-clock"/></svg></span><span class="tx"><b>Horarios y alarmas</b><span id="schedTxt">Comidas y Tresiba</span></span><svg class="ico s muted"><use href="#i-chev"/></svg></button>
       <button class="set" id="pautaB"><span class="ic"><svg class="ico s"><use href="#i-drop"/></svg></span><span class="tx"><b>Mi ficha de tratamiento</b><span>Insulinas, parámetros, comidas, gotitas y cambios</span></span><svg class="ico s muted"><use href="#i-chev"/></svg></button>
     </div>
-    <p class="muted small" style="margin:14px 4px">diego. v8 · Sage & Peach ⚡ La app no envía tus datos a ningún servidor.</p>
+    <p class="muted small" style="margin:14px 4px">diego. v13 · Sage & Peach ⚡ La app no envía tus datos a ningún servidor.</p>
   </section>
 
   <!-- HISTORIAL -->
@@ -903,9 +903,34 @@ html[data-mode] .nav .in{background:rgba(255,249,241,.97)!important}
   <symbol id="i-apple" viewBox="0 0 24 24"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/></symbol>
 </svg>
 
+<script>
+/* V13: controles independientes del script principal. Guarda las mismas claves de preferencias. */
+(function(){
+  'use strict';
+  function storeJSON(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(e){}}
+  function readJSON(key,fall){try{var v=JSON.parse(localStorage.getItem(key));return v == null? fall :v}catch(e){return fall}}
+  function setPressed(id,value){var el=document.getElementById(id);if(!el)return;el.querySelectorAll('button[data-v]').forEach(function(btn){btn.setAttribute('aria-pressed',String(btn.dataset.v===value))})}
+  window.diegoChooseTheme=function(value){
+    if(value!=='dark'&&value!=='light')return;
+    document.documentElement.setAttribute('data-mode',value);
+    storeJSON('diego.v2.theme',value);
+    var meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.content=value==='dark'?'#0B1020':'#EEF4EE';
+    setPressed('themeSeg',value);
+  };
+  window.diegoChooseFigure=function(value){
+    if(value!=='bike'&&value!=='ball')return;
+    document.documentElement.classList.toggle('fig-ball',value==='ball');
+    var prefs=readJSON('diego.v3.prefs',{});if(!prefs||typeof prefs!=='object'||Array.isArray(prefs))prefs={};prefs.fig=value;storeJSON('diego.v3.prefs',prefs);
+    setPressed('figSeg',value);
+  };
+  // Rehydrate before legacy scripts initialize. Script runs below content at the end of body.
+  window.diegoChooseTheme(readJSON('diego.v2.theme','light')==='dark'?'dark':'light');
+  var fig=readJSON('diego.v3.prefs',{});window.diegoChooseFigure(fig&&fig.fig==='bike'?'bike':'ball');
+})();
+</script>
 <script src="calc.js"></script>
 <script src="store.js"></script>
 <script src="app.js"></script>
-<script src="sage-dashboard.js?v=9"></script>
+<script src="sage-dashboard.js?v=14"></script>
 </body>
 </html>

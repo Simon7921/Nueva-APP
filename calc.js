@@ -8,7 +8,10 @@
   "use strict";
 
   // Parámetros actuales de prueba: ratio 20 y Tresiba 12 U según última indicación médica comunicada por la familia el 22/11/2026. Confirmar con el equipo tratante antes de dosificar. t = objetivo, f = sensibilidad, r = ratio.
-  var PAUTA_DEFAULT = Object.freeze({ t: 110, f: 50, r: 20 });
+  var PAUTA_DEFAULT = Object.freeze({ t: 110, f: 50, r: 18 });
+  // Pauta comunicada el 23/11/2026: la colación NO lleva insulina.
+  var MEAL_RATIOS = Object.freeze({ desayuno: 18, colacion: null, almuerzo: 22, once: 20, cena: 22 });
+  function ratioForMeal(id) { return Object.prototype.hasOwnProperty.call(MEAL_RATIOS, id) ? MEAL_RATIOS[id] : null; }
 
   // Carbohidratos objetivo por comida según la pauta (g).
   var MEALS = Object.freeze([
@@ -41,7 +44,7 @@
     { id: "redondeo", q: "Redondeo de la dosis (0,5 U o 1 U)" },
     { id: "insulina-activa", q: "Insulina activa: cuánto esperar tras un bolo antes de corregir" },
     { id: "bajo-objetivo", q: "Glicemia bajo 110: ¿se resta la corrección de la dosis de comida?" },
-    { id: "colacion", q: "¿La colación de 20 g lleva insulina?" },
+    { id: "colacion", q: "Confirmar: las colaciones no llevan insulina (indicación comunicada 23/11/2026)" },
     { id: "dosis-maxima", q: "Dosis máxima por bolo y situaciones excepcionales (enfermedad, cetonas)" },
     { id: "ejercicio", q: "Ajustes para fútbol y gimnasio (antes, durante y en la noche)" },
     { id: "sensor-capilar", q: "Cuándo confirmar con glucómetro capilar antes de calcular" }
@@ -70,6 +73,23 @@
     for (var i = 0; i < list.length; i++) { var d = toMin(list[i].t) - cur; if (d > 0) return { item: list[i], minutes: Math.ceil(d), tomorrow: false }; }
     return { item: list[0], minutes: Math.ceil(toMin(list[0].t) + 1440 - cur), tomorrow: true };
   }
+  // Selecciona únicamente la próxima comida o colación; omite eventos de insulina basal.
+  // Horarios interpretados en la zona local del dispositivo. En el minuto exacto, mantiene esa comida.
+  function nextMeal(now, schedule) {
+    var allowed = { desayuno: true, colacion: true, almuerzo: true, once: true, cena: true };
+    var list = (schedule || SCHEDULE_DEFAULT).filter(function (x) {
+      return x && allowed[x.id] && !x.basal && !isNaN(toMin(x.t)) && toMin(x.t) < 1440;
+    });
+    if (!list.length) return null;
+    var current = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+    var nearest = null;
+    list.forEach(function (x) {
+      var m = toMin(x.t), remaining = m - current, tomorrow = remaining < -1 / 60;
+      if (tomorrow) remaining += 1440;
+      if (!nearest || remaining < nearest.minutes) nearest = { item: x, minutes: remaining, tomorrow: tomorrow };
+    });
+    return nearest;
+  }
   function fmtDur(min) { var h = Math.floor(min / 60), m = min % 60; return h ? h + " h" + (m ? " " + m + " min" : "") : m + " min"; }
   // Archivo de calendario (.ics) con eventos diarios y aviso a la hora exacta y 10 min antes
   function icsFor(sched, from) {
@@ -81,7 +101,7 @@
       var t = p(Math.floor(mm / 60)) + p(mm % 60) + "00";
       L.push("BEGIN:VEVENT", "UID:diego-" + x.id + "-" + i + "-" + t + "@pauta", "DTSTAMP:" + stamp, "DTSTART:" + day + "T" + t, "DURATION:PT15M", "RRULE:FREQ=DAILY",
         "SUMMARY:" + (x.basal ? "Tresiba (insulina basal) · diego." : x.label + " · diego."),
-        "DESCRIPTION:" + (x.basal ? "Dosis basal según tu pauta." : "Mide la glicemia y calcula en la app antes de comer." + (x.id === "desayuno" ? " Toma tus 5 gotitas de vitamina D." : "")),
+        "DESCRIPTION:" + (x.basal ? "Dosis basal según tu pauta." : (x.id === "colacion" ? "Colación sin insulina según la pauta comunicada por la familia." : "Mide la glicemia y sigue la pauta médica antes de comer.") + (x.id === "desayuno" ? " Toma tus 5 gotitas de vitamina D." : "")),
         "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + x.label, "TRIGGER:-PT10M", "END:VALARM",
         "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + x.label + (x.id === "desayuno" ? " + gotitas de vitamina D" : ""), "TRIGGER:PT0M", "END:VALARM", "END:VEVENT");
     });
@@ -181,8 +201,8 @@
   }
 
   return {
-    PAUTA_DEFAULT: PAUTA_DEFAULT, MEALS: MEALS, FOODS: FOODS,
+    PAUTA_DEFAULT: PAUTA_DEFAULT, MEAL_RATIOS: MEAL_RATIOS, ratioForMeal: ratioForMeal, MEALS: MEALS, FOODS: FOODS,
     baseFoods: baseFoods, slug: slug, num: num, round1: round1,
-    SCHEDULE_DEFAULT: SCHEDULE_DEFAULT, toMin: toMin, nextEvent: nextEvent, fmtDur: fmtDur, icsFor: icsFor, hcFor: hcFor, CLINICAL_RULES: CLINICAL_RULES, rulesStatus: rulesStatus, plateTotal: plateTotal, recipe: recipe, glucoseRange: glucoseRange, dose: dose, fmt: fmt
+    SCHEDULE_DEFAULT: SCHEDULE_DEFAULT, nextMeal: nextMeal, toMin: toMin, nextEvent: nextEvent, fmtDur: fmtDur, icsFor: icsFor, hcFor: hcFor, CLINICAL_RULES: CLINICAL_RULES, rulesStatus: rulesStatus, plateTotal: plateTotal, recipe: recipe, glucoseRange: glucoseRange, dose: dose, fmt: fmt
   };
 });
